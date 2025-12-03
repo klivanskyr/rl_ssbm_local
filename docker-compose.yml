@@ -1,0 +1,15 @@
+services:
+  melee-bot:
+    image: melee-bot
+    container_name: melee-bot
+    
+    # Mount entire working directory
+    volumes:
+      - .:/opt/melee
+    
+    working_dir: /opt/melee
+    command: python3 ./main.py
+    
+    # Keep logs visible
+    stdin_open: true
+    tty: true

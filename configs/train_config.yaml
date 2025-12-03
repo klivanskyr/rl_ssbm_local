@@ -1,0 +1,56 @@
+# Training Configuration
+
+# Environment
+dolphin_path: "/opt/slippi-extracted/AppRun"
+iso_path: "/opt/melee/Melee.iso"
+save_replays: false
+enable_logging: false
+
+# Game Settings
+player_character: "MARTH"  # FOX, FALCO, MARTH, SHEIK, etc.
+player_port: 1
+player_costume: 0
+
+opponent_character: null  # null for random
+opponent_port: 2
+opponent_costume: 0
+cpu_level: 9
+
+stage: "YOSHIS_STORY"
+
+# State/Reward
+state_dim: 14
+normalize_state: true
+
+damage_dealt_weight: 0.01
+damage_taken_weight: -0.01
+stock_won_reward: 1.0
+stock_lost_penalty: -1.0
+distance_penalty_weight: -0.0001
+win_bonus: 5.0
+loss_penalty: -5.0
+
+# Training
+total_episodes: 1000
+max_steps_per_episode: 3600  # 60 seconds at 60fps
+policy_type: "ppo"  # "random" or "ppo"
+
+# PPO Hyperparameters
+ppo:
+  state_dim: 14
+  action_dim: 5
+  hidden_dim: 128
+  learning_rate: 0.0003
+  gamma: 0.99
+  epsilon: 0.2
+  value_coef: 0.5
+  entropy_coef: 0.01
+  update_epochs: 10
+  device: "cpu"  # "cpu" or "cuda"
+
+# Logging
+log_dir: "logs"
+experiment_name: null  # null for timestamp
+checkpoint_dir: "checkpoints"
+save_frequency: 100  # Save every N episodes
+print_frequency: 1  # Print every N episodes

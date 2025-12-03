@@ -1,0 +1,9 @@
+# Core dependencies
+libmelee>=0.11.0
+
+# RL/ML
+torch>=2.0.0
+numpy>=1.24.0
+
+# Utilities
+PyYAML>=6.0
