@@ -216,21 +216,30 @@ def train(config):
                 p2 = gamestate.players.get(config['opponent_port'])
                 won = p1 and p2 and p1.stock > 0 and p2.stock == 0
                 
+                # Collect detailed stats
                 episode_stats = {
                     'episode_reward': info.get('episode_reward', 0),
                     'episode_steps': info.get('episode_steps', 0),
                     'won': won,
+                    'p1_stock': p1.stock if p1 else 0,
+                    'p1_percent': p1.percent if p1 else 0,
+                    'p2_stock': p2.stock if p2 else 0,
+                    'p2_percent': p2.percent if p2 else 0,
                     **stats
                 }
                 
                 logger.log_episode(episode, episode_stats)
                 
-                if episode % config['print_frequency'] == 0:
-                    logger.print_training_progress(
-                        episode,
-                        config['total_episodes'],
-                        episode_stats
-                    )
+                # Print detailed episode summary
+                print(f"\n{'='*80}")
+                print(f"Episode {episode}/{config['total_episodes']} Complete")
+                print(f"{'='*80}")
+                print(f"  Result: {'WIN' if won else 'LOSS'}")
+                print(f"  Reward: {episode_stats['episode_reward']:.2f}")
+                print(f"  Steps:  {episode_stats['episode_steps']}")
+                print(f"  Player  - Stock: {episode_stats['p1_stock']}, Damage: {episode_stats['p1_percent']:.1f}%")
+                print(f"  Opponent - Stock: {episode_stats['p2_stock']}, Damage: {episode_stats['p2_percent']:.1f}%")
+                print(f"{'='*80}\n")
                 
                 # Save checkpoint
                 if episode % config['save_frequency'] == 0 and hasattr(policy, 'save'):
@@ -238,6 +247,7 @@ def train(config):
                     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
                     policy.save(str(checkpoint_path))
                     print(f"Checkpoint saved: {checkpoint_path}")
+
         
         else:
             # Menu navigation

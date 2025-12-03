@@ -5,6 +5,33 @@ Training logger
 import json
 import time
 from pathlib import Path
+import numpy as np
+
+
+def convert_to_serializable(obj):
+    """
+    Convert numpy types to native Python types for JSON serialization
+    
+    Args:
+        obj: Object to convert (can be dict, list, numpy type, etc.)
+        
+    Returns:
+        JSON-serializable version of obj
+    """
+    if isinstance(obj, dict):
+        return {key: convert_to_serializable(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_serializable(item) for item in obj]
+    elif isinstance(obj, (np.bool_, bool)):
+        return bool(obj)
+    elif isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    else:
+        return obj
 
 
 class TrainingLogger:
@@ -47,9 +74,12 @@ class TrainingLogger:
         
         self.episode_stats.append(log_entry)
         
+        # Convert numpy types to native Python types for JSON serialization
+        serializable_entry = convert_to_serializable(log_entry)
+        
         # Write to file (JSONL format)
         with open(self.log_file, 'a') as f:
-            f.write(json.dumps(log_entry) + '\n')
+            f.write(json.dumps(serializable_entry) + '\n')
     
     def print_episode_summary(self, episode_num, stats):
         """Print episode summary to console"""
